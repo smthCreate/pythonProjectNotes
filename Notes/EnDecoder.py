@@ -8,7 +8,6 @@ def encoder(cur_note):
 
 def decoder(cur_note):
     note=None
-    parameters = []
     with open(cur_note,'r') as f:
         note = (json.loads(f.read()))
     return note

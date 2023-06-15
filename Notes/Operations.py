@@ -4,14 +4,20 @@ from Note import Note
 from time import sleep
 import Inputs
 import Identification
+operations = [[1, "Note search", "note_search"],
+              [2, "Print notes by date","notes_by_date"],
+              [3, "Print whole note list", "print_note_list"],
+              [4, "Add note", "add_note"],
+              [5, "End work", lambda: exit()]]
 
 def menu(operations,dir_path, message="Menu",cur_note=None):
     choice = front_menu(operations,message)
+
     while choice != (operations[-1][0]):  # cicle for not end
         try:
-            operations[choice - 1][2](dir_path,cur_note)#
+            globals()[operations[choice - 1][2]](cur_note,dir_path)
         except TypeError:
-            operations[choice - 1][2](dir_path)
+            globals()[operations[choice - 1][2]](dir_path)
         choice = front_menu(operations,message)
 
 
@@ -33,7 +39,7 @@ def note_search(dir_path):
         check_que = Inputs.inputing_str("Is there file what you need? (Yes/No) \n")
         if str(check_que).lower() == "yes":
             if len(founded_file) > 1:
-                cur_note = dir_path+f'\\{searching_idname(Inputs.inputing_str("Input full id of the file"), "Input here: ")[0]}'
+                cur_note = dir_path+f'\\{searching_idname(Inputs.inputing_str("Input full id of the file"), "Input here: ",dir_path)[0]}'
             else:
                 cur_note = dir_path+f'\\{founded_file[0]}'
             additional_operations = [[1, "Edit note", lambda: edit_note(cur_note,dir_path)],
@@ -90,7 +96,6 @@ def add_note(dir_path):
     body = Inputs.inputing_str("What is text of note? (input in 1 string): ")
     cur_note = Note(Identification.identificator(), name, body)
     with open(dir_path + f"\\{cur_note.ident}_{cur_note.name}.json", 'w') as f:
-        print(dir_path + f"\\{cur_note.ident}_{cur_note.name}.json")
         f.write(EnDecoder.encoder(cur_note))
         f.flush()
         os.fsync(f.fileno())
